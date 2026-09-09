@@ -48,7 +48,7 @@ function Discover() {
       <p className="hero-kicker"><span className="status-dot" />An open registry for Omarchy</p>
       <h1 id="hero-title"><span className="sr-only">Omarchy </span><span className="pixel-title">Plugins</span></h1>
       <p className="hero-description">A little more possibility.<br className="mobile-break" /> A shell that feels like yours.</p>
-      <div className="hero-links"><a href="#catalogue">Find your next plugin <ArrowRight size={16} aria-hidden="true" /></a><Link to="/publish">Share something you built <ArrowUpRight size={16} aria-hidden="true" /></Link></div>
+      <div className="hero-links"><a href="#catalogue">Find your next plugin <ArrowRight size={16} aria-hidden="true" /></a><Link to="/publish" search={{ repository: '', path: '' }}>Share something you built <ArrowUpRight size={16} aria-hidden="true" /></Link></div>
     </section>
     <section id="catalogue" className="catalogue" aria-labelledby="catalogue-title">
       <div className="catalogue-heading"><div><p className="eyebrow">The community toolbox</p><h2 id="catalogue-title">Small additions. Big difference.</h2></div><span className="catalogue-total">{registry.plugins.length} plugins <span>/</span> {checkedCount} verified</span></div>
@@ -61,7 +61,7 @@ function Discover() {
       <div className="results-summary"><p role="status">{plugins.length} {plugins.length === 1 ? 'plugin' : 'plugins'}{search.q ? ` matching “${search.q}”` : ' to make your own'}</p><label className="checked-filter"><input type="checkbox" checked={search.checked} onChange={event => update({ checked: event.target.checked })} /><BadgeCheck size={15} aria-hidden="true" />Human reviewed only</label></div>
       {plugins.length ? <div className="plugin-grid">{plugins.map(plugin => <PluginCard key={plugin.package} plugin={plugin} />)}</div> : <div className="empty-state"><Search size={30} aria-hidden="true" /><h3>No plugins match{search.q ? ` “${search.q}”` : ' these filters'}.</h3><p>Try a different name or clear the filters.</p><button className="button" type="button" onClick={reset}>Clear filters</button></div>}
     </section>
-    <section className="publishing-banner"><div><p className="eyebrow">Made something useful?</p><h2>Publish it. Keep it moving.</h2><p>Your code stays in your repository. New versions go through automated checks, with a public record of what changed.</p></div><Link to="/publish" className="button">Publish a plugin <ArrowUpRight size={17} aria-hidden="true" /></Link></section>
-    <div className="trust-note"><BadgeCheck size={19} aria-hidden="true" /><p>Checks confirm ownership and structure. They aren’t a security audit. <Link to="/security">Know what you install <ArrowUpRight size={13} aria-hidden="true" /></Link></p></div>
+    <section className="publishing-banner"><div><p className="eyebrow">Made something useful?</p><h2>Publish it. Keep it moving.</h2><p>Your code stays in your repository. New versions go through automated checks, with a public record of what changed.</p></div><Link to="/publish" search={{ repository: '', path: '' }} className="button">Publish a plugin <ArrowUpRight size={17} aria-hidden="true" /></Link></section>
+    <div className="trust-note"><BadgeCheck size={19} aria-hidden="true" /><p>Automated checks inspect structure. Human verification applies to one exact commit. <Link to="/security">Know what you install <ArrowUpRight size={13} aria-hidden="true" /></Link></p></div>
   </>
 }

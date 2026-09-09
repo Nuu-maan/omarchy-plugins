@@ -5,7 +5,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [
     tanstackStart({
-      prerender: { enabled: true, crawlLinks: true, failOnError: true },
+      prerender: { enabled: true, crawlLinks: true, failOnError: true, filter: ({ path }) => !path.includes('?') && path !== '/registry.json' },
     }),
     react(),
   ],
