@@ -77,12 +77,15 @@ class PublicationTests(unittest.TestCase):
         record['name'] = '<script>alert(1)</script>'
         with tempfile.TemporaryDirectory() as directory:
             out = Path(directory)
-            with patch.object(build, 'OUT', out), patch.object(build, 'load_records', return_value=[record]):
+            with patch.object(build, 'OUT', out), patch.object(build, 'load_records', return_value=[record, {**record, 'publishedAt': '2026-09-10', 'receipt': 'https://github.com/example/1'}, {**record, 'publishedAt': '2026-09-11', 'receipt': 'https://github.com/example/2'}]):
                 build.build()
             exported = json.loads((out / 'registry.json').read_text())['plugins'][0]
             self.assertEqual(exported['name'], record['name'])
             self.assertEqual(exported['status'], 'unverified')
             self.assertEqual(len(exported['slug']), 20)
+            releases = json.loads((out / 'registry.json').read_text())['releases']
+            self.assertEqual(len(releases), 1)
+            self.assertEqual(releases[0]['receipt'], 'https://github.com/example/2')
 
     def test_semantic_release_order(self):
         versions = ['1.0.0-beta.10', '1.0.0-beta.2', '1.0.0', '0.9.9', '1.0.1']

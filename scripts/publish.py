@@ -15,7 +15,7 @@ from trust import MARKER, event_id, events, payload, project, review
 def load(api):
     ledger = events(api)
     records = receipts(api)
-    records.extend(e['record'] for e in ledger if e['type'] == 'submission')
+    records.extend({**e['record'], 'receipt': e['receipt']} for e in ledger if e['type'] == 'submission')
     return records, ledger
 
 
