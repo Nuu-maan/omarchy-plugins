@@ -1,5 +1,6 @@
 import json
 import os
+from itertools import islice
 from pathlib import Path
 from urllib.error import HTTPError, URLError
 
@@ -11,7 +12,7 @@ def process(api):
     records = receipts(api)
     blocked = json.loads(Path('data/blocked.json').read_text())
     issues = api.pages(f'/repos/{REGISTRY}/issues?state=open&labels=publish&sort=created&direction=asc')
-    for issue in issues:
+    for issue in islice(issues, 20):
         if 'pull_request' in issue:
             continue
         endpoint = f'/repos/{REGISTRY}/issues/{issue["number"]}'
