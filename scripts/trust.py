@@ -75,7 +75,7 @@ def project(records, ledger):
         current = record.get('scan') or {}
         record['capabilityChanges'] = [key for key, evidence in current.get('capabilities', {}).items()
                                        if evidence and not baseline.get('capabilities', {}).get(key)] if approved else []
-        triggers = [e for e in related if e['type'] in ('report', 'upstream') and
+        triggers = [e for e in related if (e['type'] in ('report', 'upstream') or e.get('upstream')) and
                     (not exact or e['timestamp'] > exact[-1]['timestamp'])]
         if record['capabilityChanges'] or triggers or (approved and not exact):
             record['submissionStatus'] = 'REVIEW REQUIRED'
@@ -83,6 +83,7 @@ def project(records, ledger):
         if exact and exact[-1]['action'] == 'revoke':
             record['submissionStatus'] = 'REVOKED'
             record['status'] = 'revoked'
+        record['trustEvents'] = [e for e in related if e['type'] == 'upstream']
         record['scanDigest'] = event_id(current)
         result.append(record)
     return result

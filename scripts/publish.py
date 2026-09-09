@@ -2,6 +2,7 @@ import json
 import os
 from pathlib import Path
 from urllib.error import HTTPError
+from urllib.parse import quote
 
 from github import GitHub
 from intake import prepare
@@ -24,8 +25,8 @@ def monitor(api, records, ledger):
         try:
             metadata = api.request(f'/repositories/{record["repositoryId"]}')
             state = {'repository': metadata['full_name'], 'archived': metadata['archived'], 'disabled': metadata.get('disabled', False)}
-            sha = api.request(f'/repos/{metadata["full_name"]}/commits/{metadata["default_branch"]}')['sha']
-            changed = sha != record['commit'] or metadata['full_name'] != record['repository'] or state['archived'] or state['disabled']
+            sha = api.request(f'/repos/{metadata["full_name"]}/commits/{quote(metadata["default_branch"], safe="")}')['sha']
+            changed = not record.get('scan') or sha != record['commit'] or metadata['full_name'] != record['repository'] or state['archived'] or state['disabled']
             if not changed:
                 continue
             identity = event_id({'package': package, 'commit': sha, **state})
@@ -37,6 +38,10 @@ def monitor(api, records, ledger):
                 fresh = verify(api, {'repository': metadata['full_name'], 'commit': sha, 'path': record['path']}, record.get('publisher') or '', 0, require_owner=False)
                 fresh['package'] = package
                 fresh = scan_repository(api, fresh)
+                if sha != record['commit']:
+                    comparison = api.request(f'/repos/{metadata["full_name"]}/compare/{record["commit"]}...{sha}')
+                    fresh['changedFiles'] = [item['filename'] for item in comparison.get('files', [])]
+                    fresh['compareUrl'] = f'https://github.com/{metadata["full_name"]}/compare/{record["commit"]}...{sha}'
                 event['record'] = fresh
                 event['type'] = 'submission'
                 event['upstream'] = True
@@ -90,5 +95,5 @@ if __name__ == '__main__':
         seeds = json.loads(Path('data/seed.json').read_text())
         proposals = prepare(api, records, ledger) + monitor(api, seeds + records, ledger)
         Path('_proposals.json').write_text(json.dumps(proposals))
-    Path('_records.json').write_text(json.dumps(project(records, ledger)))
+    Path('_records.json').write_text(json.dumps(records))
     Path('_events.json').write_text(json.dumps(ledger))

@@ -4,6 +4,7 @@ from collections import defaultdict
 from pathlib import Path
 
 from registry import parse_submission
+from trust import project
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'public'
@@ -23,11 +24,13 @@ def load_records():
     for record in seeds + live:
         parse_submission(json.dumps({k: record[k] for k in ('repository', 'commit', 'path')}))
         records.append(record)
-    return records
+    ledger_path = ROOT / '_events.json'
+    ledger = json.loads(ledger_path.read_text()) if ledger_path.exists() else []
+    return project(records, ledger)
 
 
 def build():
-    records = load_records()
+    records = [{**record, 'slug': hashlib.sha256(record['package'].encode()).hexdigest()[:20]} for record in load_records()]
     grouped = defaultdict(list)
     for record in records:
         grouped[record['package']].append(record)
