@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Repository owners publish directly. Other maintainers need ownership proof described in PUBLISHING.md. Use the same form for updates, with a new manifest version and commit.
+        Anyone can submit a public repository. Automated analysis is followed by human review of the exact commit.
   - type: textarea
     id: release
     attributes:
@@ -14,6 +14,6 @@ body:
       description: Replace these values. The optional path selects a plugin subdirectory.
       render: json
       value: |
-        {"repository":"owner/repository","commit":"FULL_40_CHARACTER_COMMIT_SHA","path":""}
+        {"repository":"https://github.com/owner/repository","path":""}
     validations:
       required: true
