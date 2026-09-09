@@ -24,12 +24,14 @@ PATTERNS = {
 
 def analyze(sources, lint=True):
     capabilities = {key: [] for key in PATTERNS}
+    counts = {key: 0 for key in PATTERNS}
     for path, source in sources.items():
         for number, line in enumerate(source.splitlines(), 1):
             for key, pattern in PATTERNS.items():
                 if re.search(pattern, line, re.I):
-                    require(sum(map(len, capabilities.values())) < 200, 'Too many findings for a bounded review; split the plugin')
-                    capabilities[key].append({'file': path, 'line': number, 'evidence': line.strip()[:240]})
+                    counts[key] += 1
+                    if len(capabilities[key]) < 12:
+                        capabilities[key].append({'file': path, 'line': number, 'evidence': line.strip()[:240]})
     diagnostics = []
     tool = shutil.which('qmllint') or next((p for p in ['/usr/lib/qt6/bin/qmllint'] if Path(p).exists()), None)
     require(not lint or tool, 'qmllint is required for a complete scan')
@@ -48,8 +50,8 @@ def analyze(sources, lint=True):
                 require(not any(w.get('type') in ('critical', 'fatal') or w.get('id') == 'syntax' for w in warnings), f'QML syntax error in {path}')
                 require(completed.returncode in (0, 255), f'QML validation failed in {path}')
                 diagnostics.append({'file': path, 'warnings': len(warnings), 'note': 'Static parser only; Omarchy imports may be unavailable.'})
-    return {'validation': 'passed', 'capabilities': capabilities, 'qml': diagnostics,
-            'method': 'Static pattern analysis and isolated qmllint parsing. Absence of a match does not establish absence of a capability.'}
+    return {'validation': 'passed', 'capabilities': capabilities, 'counts': counts, 'qml': diagnostics,
+            'method': 'Static pattern analysis and qmllint parsing. Up to 12 evidence samples per capability; all matching lines counted. Absence of a match does not establish absence of a capability.'}
 
 
 def scan_repository(api, record):
