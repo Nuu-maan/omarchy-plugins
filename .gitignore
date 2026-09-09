@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+_site/
+.env
+.venv/
+
+_records.json
