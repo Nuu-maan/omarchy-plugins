@@ -12,6 +12,6 @@ Monitoring events live in issue #11. Scheduled runs occur every 15 minutes when 
 
 ## Bounds
 
-Repository trees: 5,000 entries and 50 MB plugin scope. Source scans: 100 relevant files, 2 MB total, 500 KB per file and 200 findings. Requests: 20 per run. QML parsing: 15 seconds per file. GitHub reads: bounded pagination, response sizes and timeouts. Oversized inputs fail visibly instead of receiving partial verification.
+Repository trees: 5,000 entries and 50 MB plugin scope. Source scans: 100 relevant files, 2 MB total, 500 KB per file and up to 12 evidence samples per capability (all matches counted). Requests: 20 per run. QML parsing: 15 seconds per file. GitHub reads: bounded pagination, response sizes and timeouts. Oversized inputs fail visibly instead of receiving partial verification.
 
 The ledger currently scans up to 10,000 comments. Before admission grows beyond this ceiling, add indexed persistence and quotas (issue #2). Full dependency and installed-Omarchy compatibility checks remain separate work (issue #3). Do not run submitted code in the registry writer.
