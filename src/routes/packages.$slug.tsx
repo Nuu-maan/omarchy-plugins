@@ -11,7 +11,7 @@ export const Route = createFileRoute('/packages/$slug')({
     if (!plugin) throw notFound()
     return { plugin, history: registry.releases.filter(release => release.package === plugin.package) }
   },
-  head: ({ loaderData }) => ({ meta: [{ title: `${loaderData?.plugin.name || 'Plugin'} — Omarchy Plugins` }, { name: 'description', content: loaderData?.plugin.description || 'Omarchy plugin details' }] }),
+  head: ({ loaderData }) => ({ meta: [{ title: `${loaderData?.plugin.name || 'Plugin'} — Omachest` }, { name: 'description', content: loaderData?.plugin.description || 'Omarchy plugin details' }] }),
   component: Package,
 })
 

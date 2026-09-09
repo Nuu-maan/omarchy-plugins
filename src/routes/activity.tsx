@@ -3,7 +3,7 @@ import { ArrowUpRight, GitCommitHorizontal } from 'lucide-react'
 import { displayDate, registry } from '../lib/catalog'
 
 export const Route = createFileRoute('/activity')({
-  head: () => ({ meta: [{ title: 'Release activity — Omarchy Plugins' }] }),
+  head: () => ({ meta: [{ title: 'Release activity — Omachest' }] }),
   component: Activity,
 })
 

@@ -4,7 +4,7 @@ import { StatusBadge } from '../components/status-badge'
 import { repositoryUrl } from '../lib/catalog'
 
 export const Route = createFileRoute('/security')({
-  head: () => ({ meta: [{ title: 'Trust & security — Omarchy Plugins' }] }),
+  head: () => ({ meta: [{ title: 'Trust & security — Omachest' }] }),
   component: Security,
 })
 
