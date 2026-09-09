@@ -3,8 +3,6 @@ import hashlib
 import json
 import re
 from datetime import datetime, timezone
-from pathlib import PurePosixPath
-from urllib.parse import quote
 
 REGISTRY = 'Nuu-maan/omarchy-plugins'
 BOT_ID = 41898282
@@ -47,7 +45,7 @@ def validate_manifest(manifest, files):
         require(isinstance(value, str) and 0 < len(value.strip()) <= limit
                 and not any(ord(c) < 32 for c in value), f'Invalid manifest {field}')
     require(isinstance(manifest.get('id'), str) and re.fullmatch(r'[a-z0-9][a-z0-9.-]{1,119}', manifest['id'])
-            and not manifest['id'].startswith('omarchy.'), 'Invalid or reserved plugin ID')
+            and '.' in manifest['id'] and not manifest['id'].startswith('omarchy.'), 'Invalid or reserved plugin ID')
     version = manifest.get('version')
     require(isinstance(version, str) and len(version) < 80 and re.fullmatch(
         r'(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?', version),
@@ -68,7 +66,7 @@ def validate_manifest(manifest, files):
 
 
 def read_blob(api, repository, item, limit=100000):
-    require(item['type'] == 'blob' and item.get('size', limit + 1) <= limit, 'File is too large or is not a regular file')
+    require(item['type'] == 'blob' and item.get('mode') in ('100644', '100755') and item.get('size', limit + 1) <= limit, 'File is too large or is not a regular file')
     data = api.request(f'/repos/{repository}/git/blobs/{item["sha"]}')
     require(data.get('encoding') == 'base64', 'Unsupported blob encoding')
     raw = base64.b64decode(data['content'], validate=False)
@@ -98,6 +96,8 @@ def verify(api, submission, actor, issue_number):
         require(proof == {'registry': REGISTRY, 'publisher': actor,
                           'issue': f'https://github.com/{REGISTRY}/issues/{issue_number}'}, 'Ownership proof does not match this publisher and issue')
     require('manifest.json' in files, 'manifest.json was not found at the selected path')
+    files = {path: item for path, item in files.items() if item['type'] == 'blob'}
+    require('manifest.json' in files, 'Manifest must be a regular file')
     raw = read_blob(api, repository, files['manifest.json'])
     manifest = json.loads(raw)
     validate_manifest(manifest, files)
