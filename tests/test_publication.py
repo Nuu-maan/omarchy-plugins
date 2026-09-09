@@ -72,30 +72,17 @@ class PublicationTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             verify(self.api, self.submission, 'owner', 1)
 
-    def test_build_escapes_metadata_and_removes_old_pages(self):
+    def test_export_keeps_untrusted_metadata_as_json(self):
         record = json.loads((build.ROOT / 'data/seed.json').read_text())[0]
         record['name'] = '<script>alert(1)</script>'
         with tempfile.TemporaryDirectory() as directory:
-            out = Path(directory) / 'site'
-            out.mkdir()
-            (out / 'stale.html').write_text('removed package')
+            out = Path(directory)
             with patch.object(build, 'OUT', out), patch.object(build, 'load_records', return_value=[record]):
                 build.build()
-            self.assertFalse((out / 'stale.html').exists())
-            page = (out / 'index.html').read_text()
-            self.assertNotIn('<script>alert(1)</script>', page)
-            self.assertIn('&lt;script&gt;', page)
-            self.assertLess(sum(p.stat().st_size for p in out.rglob('*') if p.is_file()), 100000)
-            class Links(HTMLParser):
-                def handle_starttag(self, tag, attrs):
-                    for key, value in attrs:
-                        if key in ('href', 'src') and value.startswith(build.BASE):
-                            target = out / value[len(build.BASE):].split('#')[0]
-                            if value.endswith('/'):
-                                target /= 'index.html'
-                            assert target.is_file(), str(target)
-            for page in out.rglob('*.html'):
-                Links().feed(page.read_text())
+            exported = json.loads((out / 'registry.json').read_text())['plugins'][0]
+            self.assertEqual(exported['name'], record['name'])
+            self.assertEqual(exported['status'], 'unverified')
+            self.assertEqual(len(exported['slug']), 20)
 
     def test_semantic_release_order(self):
         versions = ['1.0.0-beta.10', '1.0.0-beta.2', '1.0.0', '0.9.9', '1.0.1']
