@@ -1,7 +1,8 @@
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import urlparse, quote
+from urllib.error import HTTPError
 
 from registry import REGISTRY, parse_submission, require, verify
 from scan import scan_repository
@@ -18,7 +19,15 @@ def resolve(api, body):
     submission = parse_submission(json.dumps({'repository': repository, 'commit': value.get('commit') or '0' * 40, 'path': value.get('path', '')}))
     if not value.get('commit'):
         metadata = api.request('/repos/' + repository)
-        submission['commit'] = api.request(f'/repos/{repository}/commits/{metadata["default_branch"]}')['sha']
+        submission['commit'] = api.request(f'/repos/{repository}/commits/{quote(metadata["default_branch"], safe="")}')['sha']
+    if not submission['path']:
+        revision = api.request(f'/repos/{repository}/commits/{submission["commit"]}')
+        tree = api.request(f'/repos/{repository}/git/trees/{revision["commit"]["tree"]["sha"]}?recursive=1')
+        require(not tree.get('truncated') and len(tree['tree']) <= 5000, 'Repository tree is incomplete or too large')
+        manifests = [item['path'] for item in tree['tree'] if item['path'].endswith('/manifest.json') or item['path'] == 'manifest.json']
+        if 'manifest.json' not in manifests:
+            require(len(manifests) == 1, 'Choose a plugin directory: repository has no root manifest or multiple manifests')
+            submission['path'] = manifests[0].rsplit('/', 1)[0]
     return submission
 
 
@@ -30,7 +39,8 @@ def prepare(api, records, ledger):
         labels = {label['name'] for label in issue['labels']}
         if 'pull_request' in issue or not labels.intersection({'publish', 'review', 'report'}):
             continue
-        require(len(proposals) < 20, 'Queue batch exceeds 20; remaining requests will be retried')
+        if len(proposals) >= 20:
+            break
         request_id = event_id({'issue': issue['number'], 'body': issue['body'], 'actor': issue['user']['id']})
         if request_id in seen:
             continue
@@ -55,6 +65,10 @@ def prepare(api, records, ledger):
                 event = {'type': 'submission', 'package': record['package'], 'record': record}
             event.update(requestId=request_id, timestamp=datetime.now(timezone.utc).isoformat())
             proposals.append({'issue': issue['number'], 'body': issue['body'], 'actorId': issue['user']['id'], 'event': event})
+        except HTTPError as error:
+            if error.code not in (404, 422):
+                raise
+            proposals.append({'issue': issue['number'], 'body': issue['body'], 'actorId': issue['user']['id'], 'error': 'Repository or commit is inaccessible. Use a public GitHub repository and existing commit.'})
         except (ValueError, KeyError, TypeError, UnicodeError) as error:
             proposals.append({'issue': issue['number'], 'body': issue['body'], 'actorId': issue['user']['id'], 'error': str(error)[:1000]})
     return proposals
