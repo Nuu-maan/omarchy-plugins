@@ -62,7 +62,7 @@ def scan_repository(api, record):
         if item['type'] != 'blob' or not item['path'].startswith(prefix):
             continue
         path = item['path'][len(prefix):]
-        if Path(path).suffix.lower() not in ('.qml', '.js', '.mjs', '.ts', '.sh', '.bash', '.py', '.json'):
+        if Path(path).suffix.lower() not in ('.qml', '.js', '.mjs', '.ts', '.sh', '.bash', '.py', '.json', '') and item.get('mode') != '100755':
             continue
         total += item.get('size', 0)
         require(total <= 2_000_000 and len(sources) < 100, 'Source scan exceeds 2 MB or 100 files')
