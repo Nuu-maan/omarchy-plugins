@@ -63,6 +63,7 @@ def monitor(api, records, ledger):
 def persist(api, proposals):
     records, ledger = load(api)
     reviewers = json.loads(Path('data/reviewers.json').read_text())
+    known = json.loads(Path('data/seed.json').read_text()) + records
     for proposal in proposals:
         endpoint = f'/repos/{REGISTRY}/issues/{proposal["issue"]}'
         issue = api.request(endpoint)
@@ -75,7 +76,7 @@ def persist(api, proposals):
             if any(e.get('requestId') == event['requestId'] for e in ledger):
                 continue
             if event['type'] == 'review':
-                checked = review(payload(issue['body']), issue['user'], records, reviewers)
+                checked = review(payload(issue['body']), issue['user'], known, reviewers)
                 event = {**checked, 'requestId': event['requestId']}
             body = MARKER + json.dumps(event, separators=(',', ':')) + '\n```\n\n' + ('PENDING REVIEW — automated analysis is not a guarantee of safety.' if event['type'] == 'submission' else 'Recorded in the public review history.')
             if len(body) > 60000:
@@ -93,7 +94,7 @@ if __name__ == '__main__':
     records, ledger = load(api)
     if mode == 'scan':
         seeds = json.loads(Path('data/seed.json').read_text())
-        proposals = prepare(api, records, ledger) + monitor(api, seeds + records, ledger)
+        proposals = prepare(api, seeds + records, ledger) + monitor(api, seeds + records, ledger)
         Path('_proposals.json').write_text(json.dumps(proposals))
     Path('_records.json').write_text(json.dumps(records))
     Path('_events.json').write_text(json.dumps(ledger))
