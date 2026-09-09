@@ -2,7 +2,6 @@ import hashlib
 import html
 import json
 import os
-import re
 import shutil
 from collections import defaultdict
 from pathlib import Path
@@ -72,7 +71,9 @@ def load_records():
 
 
 def build():
-    OUT.mkdir(exist_ok=True)
+    if OUT.exists():
+        shutil.rmtree(OUT)
+    OUT.mkdir()
     for path in (ROOT / 'site').iterdir():
         if path.is_file():
             shutil.copy2(path, OUT / path.name)
@@ -89,7 +90,7 @@ def build():
     for index, record in enumerate(latest):
         tags = ' '.join(record['kinds'])
         rows.append(f'''<a class="plugin-row" data-search="{esc(' '.join(str(record[k]) for k in ('name', 'description', 'repository', 'id', 'kinds')).lower())}" data-kinds="{esc(tags)}" data-status="{record['status']}" href="{url('packages/' + slug(record) + '/')}">
-<span class="plugin-icon color-{index % 4}">{esc(record['name'][:2].upper())}</span><div class="plugin-main"><div class="plugin-title"><h2>{esc(record['name'])}</h2><span class="version">v{esc(record['version'])}</span></div><p>{esc(record['description'])}</p><div class="plugin-meta"><span>{esc(record['repository'])}</span><span>{esc(tags)}</span></div></div><div class="plugin-status">{badge(record)}<span>★ {record['stars']} <span class="muted">GitHub stars</span></span></div><span class="row-arrow">↗</span></a>''')
+<span class="plugin-icon color-{index % 4}">{esc(record['name'][:2].upper())}</span><div class="plugin-main"><div class="plugin-title"><h2>{esc(record['name'])}</h2><span class="version">v{esc(record['version'])}</span></div><p>{esc(record['description'])}</p><div class="plugin-meta"><span>{esc(record['repository'])}</span><span>{esc(tags)}</span></div><div class="mobile-status">{badge(record)}</div></div><div class="plugin-status">{badge(record)}<span>★ {record['stars']} <span class="muted">GitHub stars</span></span></div><span class="row-arrow">↗</span></a>''')
     checked_count = sum(r['status'] == 'checked' for r in latest)
     content = f'''<div class="eyebrow">THE COMMUNITY TOOLBOX <span>/ 01</span></div><div class="page-heading"><div><h1>Make your shell<br><span class="accent">feel like yours.</span></h1><p>Discover Omarchy plugins. Inspect the source. Make it your own.</p></div><a class="button primary" href="{url('publish/')}">Publish a plugin <span>↗</span></a></div>
 <div class="registry-strip"><span><b>{len(latest):02}</b> plugins</span><span><b>{checked_count:02}</b> with registry checks</span><span><i class="live-dot"></i> Maintainer-owned releases</span></div>

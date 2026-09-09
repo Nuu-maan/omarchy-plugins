@@ -2,7 +2,7 @@ import json
 import os
 from itertools import islice
 from pathlib import Path
-from urllib.error import HTTPError, URLError
+from urllib.error import HTTPError
 
 from github import GitHub
 from registry import MARKER, REGISTRY, check_release, parse_submission, receipts, verify
