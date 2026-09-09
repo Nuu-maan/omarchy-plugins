@@ -16,7 +16,7 @@ def main():
         raise SystemExit('A valid REGISTRY_DEPLOY_HOOK secret is required')
     try:
         with urlopen(Request(hook, data=b'', method='POST'), timeout=30) as response:
-            if response.status != 200:
+            if not 200 <= response.status < 300:
                 raise RuntimeError('Deployment hook did not accept the request')
     except Exception:
         raise SystemExit('Deployment request failed; check hosting status and retry the workflow') from None
