@@ -1,32 +1,72 @@
-# Omarchy Plugins
+# Omachest
 
-An independent community directory for Omarchy plugins. Built with TanStack Start, React, and a public GitHub review ledger. Catalogue pages are prerendered and served from a CDN; searching and filtering do not call an API.
+**Community plugins for Omarchy. Submit once. Keep building.**
 
-## Develop
+[Browse plugins](https://omachest.vercel.app) · [Submit a plugin](https://omachest.vercel.app/publish) · [Review queue](https://omachest.vercel.app/review) · [Trust policy](SECURITY.md)
 
-Use Node.js 24+, Python 3.12+, and Qt 6 `qmllint` (`qt6-declarative-dev-tools` on Ubuntu).
+Omachest is an independent plugin directory with fast, prerendered pages and a public review history. It uses the existing Omarchy plugin format and GitHub repositories as the source of truth.
+
+## Submit a plugin
+
+1. Push your plugin to a public GitHub repository with a valid `manifest.json`, README, license and declared QML entry points.
+2. Open **Submit a plugin** and paste the repository URL. If your plugin lives in a subdirectory, expand the optional directory field.
+3. Continue to GitHub, sign in and submit the prefilled issue.
+
+That is all the author needs to submit. You do not upload a ZIP, fork this registry, or open a pull request. The scanner resolves the exact commit and reads the plugin's name, author, description, version and kinds from its manifest.
+
+The request receives automated validation results and enters **Pending review**. A successful scan is not human approval. Follow the request issue for errors and the plugin page for review status. A closed request means processing finished; it does not mean the plugin was verified.
+
+## Update a plugin
+
+Push changes to the same repository. For a release, bump the version in `manifest.json` and include release notes in GitHub Releases.
+
+The monitor checks listed repositories every 15 minutes, subject to GitHub Actions scheduling delays. It detects new commits, scans the new source, and refreshes the directory. You do not need a registry PR. To request a scan sooner, submit the same repository link again.
+
+**Verification belongs to an exact commit.** A new commit is unverified until reviewed. Previous approvals and version history remain available. Omachest updates its directory; it does not update software already installed on your computer.
+
+## Who does what?
+
+| Work | Responsible |
+| --- | --- |
+| Resolve repository and commit; validate manifest and QML | Automated scanner |
+| Show capability evidence, changed files and upstream changes | Automated scanner and site |
+| Detect updates and refresh the directory | Scheduled workflow and Vercel |
+| Inspect actual code and grant verification | A configured human reviewer |
+| Investigate reports; request changes or revoke a commit | A configured human reviewer |
+| Change the registry code or reviewer list | Maintainer, through a pull request |
+
+**Nuu-maan is the initial reviewer.** To approve a plugin, open its page from the review queue, inspect the source and scan findings, expand **Reviewer actions**, complete the checklist and enter a review note. Submit the prefilled review request on GitHub. The writer verifies your numeric GitHub identity and records your decision automatically. There is no plugin PR to merge.
+
+Additional trusted reviewers can be added to `data/reviewers.json` through a PR. Until someone performs a human review, the plugin remains unverified. Automated scans are not a guarantee of safety, and neither popularity nor repository age grants verification.
+
+## Reports and revocations
+
+Every plugin page has a **Report this plugin** form. Reports trigger a rescan and moderation review; they do not automatically remove a plugin. Use private GitHub vulnerability reporting for sensitive security details.
+
+Reviewers can approve, reject, request changes, flag or revoke an exact commit. Revocations retain their reason, reviewer, date, affected version and optional advisory recommendation. Past review records remain visible.
+
+## Run locally
+
+Requirements: Node.js 24+, Python 3.12+, and Qt 6 `qmllint`. On Ubuntu, install `qt6-declarative-dev-tools`.
 
 ```sh
 npm ci
 npm run dev
+```
+
+Open `http://127.0.0.1:3000`. The discovery catalogue builds without credentials. To include the public live ledger, run `python3 scripts/publish.py` first; an optional read-only `GH_TOKEN` increases the GitHub rate allowance.
+
+```sh
 npm run build
 npm test
 ```
 
-The checked-in discovery catalogue lets the site build without credentials. `python3 scripts/publish.py` reads public live records before building. `GH_TOKEN` is optional for reads and increases the GitHub rate allowance.
+## Architecture and deployment
 
-## Submit and review
+TanStack Start and React prerender the catalogue; Vercel serves `dist/client`. Search and filters run locally in the browser. GitHub provides authenticated requests and the public event ledger. The scanner runs with read-only permissions; a separate job rechecks identity before writing decisions. Submitted plugins and installation scripts are never executed.
 
-Paste a public GitHub repository URL on `/publish`, then confirm the prefilled request on GitHub. The scanner resolves the commit, validates its manifest and referenced entry points, parses QML, and records capability evidence. A new submission is **PENDING REVIEW**, never automatically verified.
+Vercel builds with `python3 scripts/publish.py && npm run build`. A main-branch deploy hook stored as `REGISTRY_DEPLOY_HOOK` publishes ledger changes. Human review remains separate from deployment.
 
-The public `/review` queue prioritizes changed trust signals. Configured reviewers inspect source, manifest and evidence on plugin pages, complete the checklist, and submit a decision through their GitHub account. Numeric reviewer IDs are checked again in the writer job. Review records bind the exact SHA, version, scan, reviewer, timestamp and notes.
+See [submission details](PUBLISHING.md), [security limits](SECURITY.md), and [architecture and capacity bounds](ARCHITECTURE.md). Known follow-ups are tracked in GitHub issues. Static scans do not establish runtime compatibility or cover every dependency and language.
 
-Updates are monitored on a 15-minute schedule, subject to GitHub Actions scheduling delays. A new commit never inherits verification. Reports request a rescan and human moderation; revocation remains visible with a reason and optional advisory recommendation.
-
-See [PUBLISHING.md](PUBLISHING.md), [SECURITY.md](SECURITY.md), and [ARCHITECTURE.md](ARCHITECTURE.md).
-
-## Deployment
-
-Vercel builds with `python3 scripts/publish.py && npm run build` and serves `dist/client`. Connect the repository and configure a main-branch deploy hook as the GitHub secret `REGISTRY_DEPLOY_HOOK`. The publication workflow requests a deployment after processing the queue. No hosting token is exposed to submitted code.
-
-This project is not affiliated with the official Omarchy project. Original plugin authors retain credit and their own licenses.
+Omachest is not affiliated with the official Omarchy project. Plugin authors retain their credit and licenses.
