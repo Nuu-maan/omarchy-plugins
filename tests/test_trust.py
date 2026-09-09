@@ -10,6 +10,7 @@ class TrustTests(unittest.TestCase):
     def test_review_requires_identity_checklist_and_exact_scan(self):
         scan = analyze({'x.qml': 'Item { property string url: "https://example.com" }'}, lint=False)
         record = {'package': '@a/b', 'commit': 'a' * 40, 'version': '1.0.0', 'scan': scan}
+        self.assertEqual(project([record], [{'type': 'submission', 'package': '@a/b', 'upstream': True, 'timestamp': '2026-09-10'}])[0]['submissionStatus'], 'PENDING REVIEW')
         value = {'package': '@a/b', 'commit': 'a' * 40, 'action': 'approve', 'notes': 'Inspected code', 'checklist': CHECKLIST, 'scanDigest': event_id(scan)}
         with self.assertRaises(ValueError):
             review(value, {'id': 2, 'login': 'stranger'}, [record], [1])

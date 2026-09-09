@@ -75,7 +75,7 @@ def project(records, ledger):
         current = record.get('scan') or {}
         record['capabilityChanges'] = [key for key, evidence in current.get('capabilities', {}).items()
                                        if evidence and not baseline.get('capabilities', {}).get(key)] if approved else []
-        triggers = [e for e in related if (e['type'] in ('report', 'upstream') or e.get('upstream')) and
+        triggers = [e for e in related if (e['type'] in ('report', 'upstream') or (e.get('upstream') and approved)) and
                     (not exact or e['timestamp'] > exact[-1]['timestamp'])]
         identity_changed = approved and (approved[-1].get('repositoryId') != record.get('repositoryId') or approved[-1].get('repository') != record.get('repository'))
         if record['capabilityChanges'] or triggers or identity_changed or (approved and not exact):
