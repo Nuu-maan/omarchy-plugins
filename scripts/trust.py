@@ -51,7 +51,7 @@ def review(value, actor, records, reviewers):
     recommendation = value.get('recommendation', '')
     require(isinstance(recommendation, str) and len(recommendation) <= 2000, 'Invalid advisory recommendation')
     return {'type': 'review', 'package': record['package'], 'commit': record['commit'],
-            'version': record['version'], 'action': value['action'], 'notes': value['notes'].strip(),
+            'version': record['version'], 'repositoryId': record.get('repositoryId'), 'repository': record.get('repository'), 'action': value['action'], 'notes': value['notes'].strip(),
             'recommendation': recommendation, 'reviewer': actor['login'], 'reviewerId': actor['id'],
             'checklist': value.get('checklist', []), 'scan': record.get('scan'),
             'timestamp': datetime.now(timezone.utc).isoformat()}
@@ -77,7 +77,8 @@ def project(records, ledger):
                                        if evidence and not baseline.get('capabilities', {}).get(key)] if approved else []
         triggers = [e for e in related if (e['type'] in ('report', 'upstream') or e.get('upstream')) and
                     (not exact or e['timestamp'] > exact[-1]['timestamp'])]
-        if record['capabilityChanges'] or triggers or (approved and not exact):
+        identity_changed = approved and (approved[-1].get('repositoryId') != record.get('repositoryId') or approved[-1].get('repository') != record.get('repository'))
+        if record['capabilityChanges'] or triggers or identity_changed or (approved and not exact):
             record['submissionStatus'] = 'REVIEW REQUIRED'
             record['status'] = 'review-required'
         if exact and exact[-1]['action'] == 'revoke':
