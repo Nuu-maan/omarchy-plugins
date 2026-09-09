@@ -41,7 +41,8 @@ def build():
             record = {**record, 'status': 'unverified', 'submissionStatus': 'PENDING REVIEW', 'reviews': [], 'reports': [], 'verification': None, 'capabilityChanges': []}
         latest.append({**record, 'slug': hashlib.sha256(record['package'].encode()).hexdigest()[:20]})
     latest.sort(key=lambda r: (r['status'] != 'verified', r['name'].lower()))
-    activity = sorted([r for r in records if r.get('publishedAt')], key=lambda r: r['publishedAt'], reverse=True)
+    revisions = {(r['package'], r['commit']): r for r in records if r.get('publishedAt')}
+    activity = sorted(revisions.values(), key=lambda r: r['publishedAt'], reverse=True)
     OUT.mkdir(exist_ok=True, parents=True)
     (OUT / 'registry.json').write_text(json.dumps({'schemaVersion': 1, 'plugins': latest, 'releases': activity}, separators=(',', ':')))
     print(f'Exported {len(latest)} plugins and {len(activity)} releases.')
