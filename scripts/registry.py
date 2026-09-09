@@ -74,7 +74,7 @@ def read_blob(api, repository, item, limit=100000):
     return raw
 
 
-def verify(api, submission, actor, issue_number):
+def verify(api, submission, actor, issue_number, require_owner=True):
     repo = api.request('/repos/' + submission['repository'])
     require(not repo['private'] and not repo['archived'] and not repo.get('disabled'), 'Repository must be public and active')
     repository = repo['full_name']
@@ -89,7 +89,7 @@ def verify(api, submission, actor, issue_number):
     files = {item['path'][len(prefix):]: item for item in tree['tree'] if item['path'].startswith(prefix)}
     require(files and all(i.get('mode') not in ('120000', '160000') for i in files.values()), 'Plugin cannot contain symlinks or submodules')
     require(sum(i.get('size', 0) for i in files.values()) <= 50_000_000, 'Plugin exceeds 50 MB')
-    if repo['owner']['type'] != 'User' or actor.lower() != repo['owner']['login'].lower():
+    if require_owner and (repo['owner']['type'] != 'User' or actor.lower() != repo['owner']['login'].lower()):
         proof_item = next((i for i in tree['tree'] if i['path'] == '.omarchy-registry.json'), None)
         require(proof_item is not None, 'Non-owner maintainers must add .omarchy-registry.json ownership proof; see publishing guide')
         proof = json.loads(read_blob(api, repository, proof_item))
