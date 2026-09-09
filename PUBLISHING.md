@@ -1,54 +1,26 @@
-# Publishing
+# Submission and review
 
-Open [a publication request](https://github.com/Nuu-maan/omarchy-plugins/issues/new?template=publish.yml) from your GitHub account. Use the same process for new plugins and updates.
+Use the site's Submit Plugin form. Anyone can suggest a public repository; this does not claim repository ownership. The manifest is the source of metadata. An optional directory selects a plugin inside a larger repository.
 
-```json
-{"repository":"owner/repository","commit":"0123456789012345678901234567890123456789","path":""}
-```
-
-`commit` is a complete lowercase Git SHA. `path` is an optional plugin directory within the repository. Root plugins use an empty string. Each package is scoped as `@owner/repository[/path]`; display names and manifest IDs are not registry ownership claims.
-
-## Requirements
-
-- Public, active GitHub repository with at most 5,000 tree entries.
-- Plugin subtree of at most 50 MB, with no symlinks or submodules.
-- Schema version 1 manifest, namespaced non-reserved ID, name, description, author, license, and version.
-- Version format `major.minor.patch` or `major.minor.patch-prerelease`.
-- Supported kinds: `bar-widget`, `panel`, `overlay`, `menu`, `service`, `bar`.
-- Every declared entry point is an existing QML file of at most 500 KB.
-- README and license files in the selected plugin directory.
-
-Suites without an individual plugin manifest are not supported. Submit each plugin subdirectory separately.
-
-## Ownership
-
-If you own the personal GitHub repository, open the request from that account. Other contributors and organization maintainers must first open an issue, then commit this file at the repository root as `.omarchy-registry.json`:
+Equivalent issue body, with the `publish` label:
 
 ```json
-{
-  "registry": "Nuu-maan/omarchy-plugins",
-  "publisher": "your-github-login",
-  "issue": "https://github.com/Nuu-maan/omarchy-plugins/issues/123"
-}
+{"repository":"https://github.com/owner/plugin","path":""}
 ```
 
-Use the exact login of the issue author and the actual submission issue URL. Update the issue body to the new commit containing the proof, then reopen it. A fork does not inherit the original repository's package namespace. Repository identity changes require administrator review.
+An optional full `commit` SHA selects a particular revision. Otherwise the scanner resolves the default branch. The original schema-1 manifest must declare ID, name, description, author, license, version, kinds and valid QML entry points. Include a README and license file. Symlinks, submodules, oversized trees and incomplete scans require changes.
 
-## Updates and retries
+## States
 
-Increase the manifest version, commit, and submit again. An accepted version cannot point to a different commit. Identical repeated requests are idempotent. Publishing an older version does not change the highest accepted version shown on the site.
+- **PENDING REVIEW:** received and awaiting human inspection; no verification.
+- **APPROVED:** a configured reviewer approved this exact commit and scan.
+- **REJECTED:** reviewer declined the submitted commit; see public reason.
+- **CHANGES REQUESTED:** resolve validation errors or reviewer feedback and resubmit.
+- **REVIEW REQUIRED:** code or trust signals changed; earlier approval does not cover the current state.
+- **REVOKED:** the affected commit is withdrawn with a public reason; it remains in history.
 
-Rejected submissions receive a reason. Correct the request and reopen it. API outages and rate limits leave requests open for retry. The workflow drains open submissions on new requests and on a 15-minute recovery schedule; GitHub can delay scheduled runs.
+Reviewer actions are prefilled by plugin pages, then submitted on GitHub. Approval requires every checklist item, a note and the current scan digest. Only numeric accounts in `data/reviewers.json` can moderate. Changes to that file require a PR.
 
-An acceptance receipt means checks passed. The catalogue changes after successful deployment. See [workflow runs](https://github.com/Nuu-maan/omarchy-plugins/actions) if the site has not updated.
+Reports use the plugin page's report form. Reports are public; use GitHub private vulnerability reporting for details that should not be disclosed publicly. A single report never automatically revokes a plugin.
 
-## Command line
-
-With Python and the GitHub CLI installed and authenticated:
-
-```sh
-python scripts/submit.py owner/repository FULL_COMMIT_SHA
-python scripts/submit.py owner/repository FULL_COMMIT_SHA --path plugins/clock
-```
-
-The command opens a public submission under the authenticated account. It never pushes plugin code. Publication still runs the same server-side checks.
+The request issue closes when its event is recorded, not when human verification is granted. The public queue shows review status independently of GitHub issue closure. Correct a validation failure and reopen the request to retry. No response-time guarantee is made for human review.

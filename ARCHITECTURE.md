@@ -1,32 +1,17 @@
 # Architecture
 
-The browser reads prebuilt HTML, CSS, and a small script from GitHub Pages. It makes no GitHub API requests for browsing or filtering. Each plugin has a static detail page, and `registry.json` exposes the current catalogue and accepted release history.
+TanStack Start prerenders discovery, package, activity, review and submission routes. The browser filters a generated JSON snapshot. There is no request-time catalogue database or GitHub API call on page load.
 
-Publishing uses GitHub as the identity provider, queue, and public data store:
+GitHub provides authenticated submission issues and a public event ledger. `intake.py` validates queued inputs; `registry.py` validates pinned repository structure; `scan.py` gathers bounded static evidence and runs qmllint. `trust.py` authorizes human actions and projects trust state. `publish.py` monitors numeric repository identities and records events. `build.py` exports seeds plus the ledger for prerendering.
 
-1. An issue with the `publish` label contains a repository, commit SHA, and optional path.
-2. A default-branch workflow drains open requests in creation order.
-3. The validator reads bounded Git objects over the GitHub API. It does not execute repository content.
-4. Accepted releases get structured bot receipts; failures get actionable explanations.
-5. The builder reads accepted receipts, applies the reviewed suspension list, and combines them with explicitly unverified discovery metadata.
-6. An artifact deployment publishes the complete static catalogue. Failed deployments leave the previous site intact; later runs rebuild accepted releases from the ledger.
+The scanner has read-only GitHub permissions and passes bounded proposals through a same-run artifact. The writer rechecks issue content and identity, validates human authorization and scan digest, then appends bot event comments. Request IDs make repeated processing idempotent. Reviewer IDs are versioned in the repository. No human approval is inferred from legacy automated receipts.
 
-A workflow concurrency group serializes publishers. GitHub may replace a pending run, so each run drains the queue instead of relying on its triggering issue. A recovery schedule picks up missed requests and failed deployments. Scheduled execution is best effort, not a latency guarantee. There are no promises of second-level publication.
+New upstream commits get fresh scans, including unchanged version numbers. Earlier approvals remain tied to earlier SHAs. A changed commit conservatively requires review, including changes that might be harmless. Transfer, archive, deletion and report events also require review. This conservative rule avoids calling unknown changes safe.
 
-The package key is `@owner/repository[/path]`. Version identity is scoped to that key and pinned to a commit. GitHub repository IDs prevent deleted-name takeover. The highest accepted semantic version is the default; rejected versions cannot replace it. Historical receipts are exposed independently of the default version.
+Monitoring events live in issue #11. Scheduled runs occur every 15 minutes when GitHub schedules them; they are not a real-time service-level guarantee. Unchanged upstream state does not create new ledger events. Hosting rebuilds publish the resulting snapshot.
 
-Discovery metadata is a dated snapshot, not a live star counter or a verification claim. Imports preserve actual manifest authors, including on forks. No code is copied from imported plugins.
+## Bounds
 
-## Operation
+Repository trees: 5,000 entries and 50 MB plugin scope. Source scans: 100 relevant files, 2 MB total, 500 KB per file and 200 findings. Requests: 20 per run. QML parsing: 15 seconds per file. GitHub reads: bounded pagination, response sizes and timeouts. Oversized inputs fail visibly instead of receiving partial verification.
 
-Enable GitHub Pages with the Actions build source and private vulnerability reporting. Create the `publish` issue label. Require the `test` pull-request check on `main`, disallow force pushes and deletion, and make changes through pull requests.
-
-The workflow uses the built-in repository token. There is no application database, OAuth client secret, package installation, external backend deployment, or billing integration to provision.
-
-Build locally with `BASE_PATH=/ python scripts/build.py` for a root-mounted preview. Production defaults to `/omarchy-plugins/`. `GH_TOKEN=... python scripts/publish.py` reads the live ledger; set `PROCESS_SUBMISSIONS=true` only when intending to publish and close requests. The generated `_records.json` is ignored by Git.
-
-## Known scaling limits
-
-Receipt collection is an O(n) scan with a hard limit of 10,000 comments. It fails rather than silently producing a partial catalogue. A publication batch handles at most 20 requests; overflow stays open for later runs. GitHub Actions minutes, API rate limits, and spam controls apply. At sustained volume, migrate the ledger and queue to a durable service with indexed reads and admission quotas. Preserve repository identity and immutable version constraints during that migration.
-
-There is no artifact mirror, malware sandbox, automated transitive dependency audit, or installation telemetry. These are separate capabilities, not implied by a structural check badge. The initial implementation supports individual Quattro plugins, including subdirectories; it does not support suite-only manifests.
+The ledger currently scans up to 10,000 comments. Before admission grows beyond this ceiling, add indexed persistence and quotas (issue #2). Full dependency and installed-Omarchy compatibility checks remain separate work (issue #3). Do not run submitted code in the registry writer.
