@@ -1,8 +1,8 @@
 {
   "framework": null,
-  "installCommand": "",
-  "buildCommand": "python3 scripts/publish.py && BASE_PATH=/ python3 scripts/build.py",
-  "outputDirectory": "_site",
+  "installCommand": "npm ci",
+  "buildCommand": "python3 scripts/publish.py && npm run build",
+  "outputDirectory": "dist/client",
   "cleanUrls": true,
   "trailingSlash": true
 }
