@@ -37,8 +37,21 @@ def prepare(api, records, ledger):
     seen = {e.get('requestId') for e in ledger}
     for issue in api.pages(f'/repos/{REGISTRY}/issues?state=open&sort=created&direction=asc'):
         labels = {label['name'] for label in issue['labels']}
-        if 'pull_request' in issue or not labels.intersection({'publish', 'review', 'report'}):
+        if 'pull_request' in issue:
             continue
+        if not labels.intersection({'publish', 'review', 'report'}):
+            try:
+                value = payload(issue['body'])
+            except (ValueError, TypeError):
+                continue
+            if 'action' in value:
+                labels.add('review')
+            elif 'package' in value and 'reason' in value:
+                labels.add('report')
+            elif 'repository' in value:
+                labels.add('publish')
+            else:
+                continue
         if len(proposals) >= 20:
             break
         request_id = event_id({'issue': issue['number'], 'body': issue['body'], 'actor': issue['user']['id']})

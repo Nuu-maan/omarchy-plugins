@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   scan:
-    if: github.ref == 'refs/heads/main' && (github.event_name != 'issues' || contains(github.event.issue.labels.*.name, 'publish') || contains(github.event.issue.labels.*.name, 'review') || contains(github.event.issue.labels.*.name, 'report'))
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
