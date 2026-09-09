@@ -1,5 +1,5 @@
 import { createRootRoute, HeadContent, Link, Outlet, Scripts } from '@tanstack/react-router'
-import { ArrowUpRight, Blocks, CodeXml } from 'lucide-react'
+import { ArrowUpRight, Blocks, SquareTerminal } from 'lucide-react'
 import '@fontsource-variable/jetbrains-mono'
 import '@fontsource/silkscreen/700.css'
 import { ThemePicker } from '../components/theme-picker'
@@ -35,7 +35,7 @@ function Root() {
           <Link to="/activity" activeProps={{ 'aria-current': 'page' }}>Releases</Link>
           <Link to="/review">Review queue</Link><Link to="/security" activeProps={{ 'aria-current': 'page' }}>Trust</Link>
         </nav>
-        <div className="header-actions"><ThemePicker /><a href={repositoryUrl} className="icon-button github-link" aria-label="Registry on GitHub"><CodeXml size={19} aria-hidden="true" /></a><Link to="/publish" search={{ repository: '', path: '' }} className="button primary header-publish">Publish <ArrowUpRight size={16} aria-hidden="true" /></Link></div>
+        <div className="header-actions"><ThemePicker /><a href={repositoryUrl} className="icon-button github-link" aria-label="Registry on GitHub"><SquareTerminal size={19} aria-hidden="true" /></a><Link to="/publish" search={{ repository: '', path: '' }} className="button primary header-publish">Publish <ArrowUpRight size={16} aria-hidden="true" /></Link></div>
       </div></header>
       <main id="main" className="site-main" tabIndex={-1}><Outlet /></main>
       <footer className="site-footer"><div className="footer-top"><Link to="/" search={{ q: '', kind: '', checked: false, sort: 'name' }} className="brand"><Blocks size={21} aria-hidden="true" />omarchy / plugins</Link><span>Built by the community. Open to everyone.</span></div><div className="footer-bottom"><p>Independent registry. Not affiliated with Omarchy.</p><div><a href="/registry.json">Registry JSON</a><a href={repositoryUrl}>Source</a><Link to="/security">Security</Link><a href="https://omarchy.org/">Omarchy ↗</a></div></div></footer>
