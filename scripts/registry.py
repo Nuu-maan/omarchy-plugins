@@ -117,6 +117,7 @@ def verify(api, submission, actor, issue_number):
 
 
 def receipts(api):
+    # ponytail: scan at most 10,000 comments; use indexed storage beyond that.
     records = []
     for comment in api.pages(f'/repos/{REGISTRY}/issues/comments'):
         if comment['user']['id'] != BOT_ID or not comment.get('body', '').startswith(MARKER):

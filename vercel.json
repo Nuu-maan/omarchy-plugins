@@ -1,0 +1,8 @@
+{
+  "framework": null,
+  "installCommand": "",
+  "buildCommand": "python3 scripts/publish.py && BASE_PATH=/ python3 scripts/build.py",
+  "outputDirectory": "_site",
+  "cleanUrls": true,
+  "trailingSlash": true
+}
