@@ -24,9 +24,11 @@ def monitor(api, records, ledger):
     for package, record in latest.items():
         try:
             metadata = api.request(f'/repositories/{record["repositoryId"]}')
-            state = {'repository': metadata['full_name'], 'archived': metadata['archived'], 'disabled': metadata.get('disabled', False)}
+            releases = api.request(f'/repos/{metadata["full_name"]}/releases?per_page=10')
+            release_state = [{'id': r['id'], 'tag': r['tag_name'], 'authorId': r['author']['id'], 'updatedAt': r['updated_at']} for r in releases]
+            state = {'releases': release_state, 'repository': metadata['full_name'], 'archived': metadata['archived'], 'disabled': metadata.get('disabled', False)}
             sha = api.request(f'/repos/{metadata["full_name"]}/commits/{quote(metadata["default_branch"], safe="")}')['sha']
-            changed = not record.get('scan') or sha != record['commit'] or metadata['full_name'] != record['repository'] or state['archived'] or state['disabled']
+            changed = release_state != record.get('releaseState', []) or not record.get('scan') or sha != record['commit'] or metadata['full_name'] != record['repository'] or state['archived'] or state['disabled']
             if not changed:
                 continue
             identity = event_id({'package': package, 'commit': sha, **state})
@@ -37,6 +39,10 @@ def monitor(api, records, ledger):
             try:
                 fresh = verify(api, {'repository': metadata['full_name'], 'commit': sha, 'path': record['path']}, record.get('publisher') or '', 0, require_owner=False)
                 fresh['package'] = package
+                fresh['releaseState'] = release_state
+                if releases:
+                    fresh['changelog'] = (releases[0].get('body') or '')[:4000]
+                    fresh['releaseUrl'] = releases[0]['html_url']
                 fresh = scan_repository(api, fresh)
                 if sha != record['commit']:
                     comparison = api.request(f'/repos/{metadata["full_name"]}/compare/{record["commit"]}...{sha}')
