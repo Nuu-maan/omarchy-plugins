@@ -3,7 +3,6 @@ import base64
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-from urllib.parse import quote
 
 from github import GitHub
 from registry import parse_submission
