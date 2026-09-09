@@ -32,19 +32,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PROCESS_SUBMISSIONS: 'true'
-      - run: python scripts/build.py
-      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa
-        with:
-          path: _site
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e
-        id: deployment
+      - run: BASE_PATH=/ python scripts/build.py
+      - name: Request catalogue deployment
+        env:
+          DEPLOY_HOOK: ${{ secrets.REGISTRY_DEPLOY_HOOK }}
+        run: python scripts/deploy.py

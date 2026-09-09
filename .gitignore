@@ -5,3 +5,5 @@ _site/
 .venv/
 
 _records.json
+
+.vercel/

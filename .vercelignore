@@ -1,0 +1,5 @@
+.git
+_site
+_records.json
+__pycache__
+tests
