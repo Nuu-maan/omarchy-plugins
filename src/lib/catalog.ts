@@ -21,6 +21,9 @@ export type Plugin = {
   repositoryCreatedAt: string
   status: 'verified' | 'unverified' | 'review-required' | 'revoked'
   submissionStatus: string
+  trustEvents?: { notes?: string; timestamp: string; state?: { repository: string; archived: boolean; disabled: boolean } }[]
+  changedFiles?: string[]
+  compareUrl?: string
   scan?: Scan
   scanDigest?: string
   manifest?: Record<string, unknown>
