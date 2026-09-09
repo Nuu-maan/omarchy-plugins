@@ -326,3 +326,14 @@ pre { background: var(--surface); border: 1px solid var(--line); padding: 20px; 
   .button, .plugin-card, .type-filters button[aria-pressed='true'] { border-color: ButtonText; }
   :focus-visible { outline-color: Highlight; }
 }
+.submission-form { display: grid; gap: 14px; align-content: start; max-inline-size: 660px; }
+.submission-form input:not([type=checkbox]), .submission-form textarea, .submission-form select { inline-size: 100%; border: 1px solid var(--control-line); border-radius: 0; padding: 12px; font: inherit; font-size: 16px; color: var(--text); background: var(--surface); }
+.submission-form textarea { min-block-size: 110px; resize: vertical; }
+.submission-form p { color: var(--secondary); margin-block: 0 12px; }
+.submission-form .button { justify-self: start; }
+.submission-form details input { margin-block: 12px; }
+.review-check { display: flex; align-items: center; gap: 12px; min-block-size: 44px; font-size: 13px; }
+.review-check input { accent-color: var(--accent); }
+fieldset { border: 1px solid var(--control-line); padding: 14px; }
+.evidence { display: block; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 12px; margin-block: 8px; }
+.notice code, .submission-form code { overflow-wrap: anywhere; }
