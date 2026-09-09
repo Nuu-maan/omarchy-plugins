@@ -1,0 +1,19 @@
+name: Publish a plugin
+description: Submit a new plugin or a new version at an exact commit.
+title: "Publish: "
+labels: [publish]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Repository owners publish directly. Other maintainers need ownership proof described in PUBLISHING.md. Use the same form for updates, with a new manifest version and commit.
+  - type: textarea
+    id: release
+    attributes:
+      label: Release
+      description: Replace these values. The optional path selects a plugin subdirectory.
+      render: json
+      value: |
+        {"repository":"owner/repository","commit":"FULL_40_CHARACTER_COMMIT_SHA","path":""}
+    validations:
+      required: true
