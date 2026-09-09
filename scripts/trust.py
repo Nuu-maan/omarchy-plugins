@@ -67,7 +67,7 @@ def project(records, ledger):
         approved = [e for e in reviews if e['action'] == 'approve' and not any(
             later['action'] == 'revoke' and later['commit'] == e['commit'] for later in reviews)]
         record['reviews'] = reviews
-        record['reports'] = [e for e in related if e['type'] == 'report']
+        record['reports'] = [e for e in related if e['type'] == 'report' and (not exact or e['timestamp'] > exact[-1]['timestamp'])]
         record['verification'] = approved[-1] if approved else None
         record['submissionStatus'] = ACTIONS[exact[-1]['action']] if exact else 'PENDING REVIEW'
         record['status'] = 'verified' if record['submissionStatus'] == 'APPROVED' else 'unverified'
