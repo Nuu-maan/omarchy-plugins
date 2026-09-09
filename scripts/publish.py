@@ -1,6 +1,7 @@
 import json
 import os
 from pathlib import Path
+from datetime import datetime, timezone
 from urllib.error import HTTPError
 from urllib.parse import quote
 
@@ -35,7 +36,7 @@ def monitor(api, records, ledger):
             if any(e.get('requestId') == identity for e in ledger):
                 continue
             event = {'type': 'upstream', 'package': package, 'commit': sha, 'state': state, 'requestId': identity,
-                     'timestamp': metadata.get('pushed_at') or metadata['updated_at']}
+                     'timestamp': datetime.now(timezone.utc).isoformat()}
             try:
                 fresh = verify(api, {'repository': metadata['full_name'], 'commit': sha, 'path': record['path']}, record.get('publisher') or '', 0, require_owner=False)
                 fresh['package'] = package
@@ -59,7 +60,6 @@ def monitor(api, records, ledger):
                 raise
             identity = event_id({'package': package, 'unavailable': True})
             if not any(e.get('requestId') == identity for e in ledger):
-                from datetime import datetime, timezone
                 proposals.append({'issue': 11, 'event': {'type': 'upstream', 'package': package,
                     'notes': 'Repository is unavailable or no longer public.', 'requestId': identity,
                     'timestamp': datetime.now(timezone.utc).isoformat()}})
