@@ -69,7 +69,7 @@ button, select { cursor: pointer; }
 button { color: inherit; }
 input, select { min-inline-size: 0; }
 svg { flex-shrink: 0; stroke-width: 1.5px; }
-button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; }
 ::selection { background: var(--accent); color: var(--accent-text); }
 h1, h2, h3 { text-wrap: balance; font-weight: 600; line-height: 1.3; }
 h1 { font-size: clamp(1.875rem, 4vw, 2.5rem); letter-spacing: -0.055em; }
@@ -337,3 +337,24 @@ pre { background: var(--surface); border: 1px solid var(--line); padding: 20px; 
 fieldset { border: 1px solid var(--control-line); padding: 14px; }
 .evidence { display: block; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 12px; margin-block: 8px; }
 .notice code, .submission-form code { overflow-wrap: anywhere; }
+
+.package-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-block: 0 32px; }
+.review-panel { padding: 24px; margin-block: 36px; border: 1px solid var(--control-line); background: var(--surface); }
+.review-panel h2 { margin-block: 8px 14px; }
+.review-panel > p { margin-block-end: 20px; }
+.review-panel .submission-form { margin-block-start: 24px; }
+.review-panel fieldset { min-inline-size: 0; }
+.review-panel legend { padding-inline: 6px; }
+.digest-details { padding-block: 14px; border-block-end: 1px solid var(--line); }
+summary { cursor: pointer; min-block-size: 44px; align-content: center; }
+details[open] > summary { margin-block-end: 12px; }
+#review-actions, #security-evidence, #report { scroll-margin-block-start: 24px; }
+.queue-list { display: grid; gap: 16px; margin-block: 24px 48px; }
+.queue-item { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; padding: 24px; border: 1px solid var(--line); background: var(--surface); }
+.queue-item > div { min-inline-size: 0; flex: 1 1 240px; }
+.queue-item h2 { margin: 0 0 10px; font-size: 1.125rem; overflow-wrap: anywhere; }
+.queue-item p { margin-block-start: 8px; font-size: var(--text-sm); }
+@media (max-width: 37rem) {
+  .review-panel, .queue-item { padding: 16px; }
+  .review-panel fieldset { padding: 10px; }
+}
