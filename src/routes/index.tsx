@@ -1,3 +1,4 @@
+import { seo } from '../lib/seo'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowRight, ArrowUpRight, BadgeCheck, Search, X } from 'lucide-react'
 import { useEffect, useRef } from 'react'
@@ -5,6 +6,7 @@ import { PluginCard } from '../components/plugin-card'
 import { filterPlugins, kinds, registry } from '../lib/catalog'
 
 export const Route = createFileRoute('/')({
+  head: () => seo("/", "Omachest \u2014 Omarchy plugins, widgets & panels", "Discover community plugins for Omarchy. Browse widgets, panels and services, inspect source scans, and submit your plugin for human review."),
   validateSearch: (search: Record<string, unknown>) => ({
     q: typeof search.q === 'string' ? search.q.slice(0, 200) : '',
     kind: typeof search.kind === 'string' && kinds.some(kind => kind.value === search.kind) ? search.kind : '',

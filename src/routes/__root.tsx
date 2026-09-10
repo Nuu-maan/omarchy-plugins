@@ -33,7 +33,7 @@ function Root() {
         <nav aria-label="Main navigation">
           <Link to="/" search={{ q: '', kind: '', checked: false, sort: 'name' }} activeOptions={{ exact: true }} activeProps={{ 'aria-current': 'page' }}>Discover</Link>
           <Link to="/activity" activeProps={{ 'aria-current': 'page' }}>Releases</Link>
-          <Link to="/review">Review queue</Link><Link to="/security" activeProps={{ 'aria-current': 'page' }}>Trust</Link>
+          <Link to="/review" activeProps={{ 'aria-current': 'page' }}>Review queue</Link><Link to="/security" activeProps={{ 'aria-current': 'page' }}>Trust</Link>
         </nav>
         <div className="header-actions"><ThemePicker /><a href={repositoryUrl} className="icon-button github-link" aria-label="Registry on GitHub"><SquareTerminal size={19} aria-hidden="true" /></a><Link to="/publish" search={{ repository: '', path: '' }} className="button primary header-publish">Submit <ArrowUpRight size={16} aria-hidden="true" /></Link></div>
       </div></header>

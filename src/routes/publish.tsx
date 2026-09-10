@@ -1,3 +1,4 @@
+import { seo } from '../lib/seo'
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { ArrowUpRight } from 'lucide-react'
@@ -5,7 +6,7 @@ import { submissionUrl } from '../lib/catalog'
 
 export const Route = createFileRoute('/publish')({
   validateSearch: (search: Record<string, unknown>) => ({ repository: typeof search.repository === 'string' ? search.repository : '', path: typeof search.path === 'string' ? search.path : '' }),
-  head: () => ({ meta: [{ title: 'Submit a plugin — Omachest' }] }),
+  head: () => seo("/publish", "Submit an Omarchy plugin \u2014 Omachest", "Submit a public GitHub repository to Omachest. Get automated source checks, public review notes and automatic monitoring for plugin updates."),
   component: Publish,
 })
 
