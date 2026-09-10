@@ -1,8 +1,9 @@
+import { seo } from '../lib/seo'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { registry } from '../lib/catalog'
 import { StatusBadge } from '../components/status-badge'
 
-export const Route = createFileRoute('/review')({ head: () => ({ meta: [{ title: 'Review queue — Omachest' }] }), component: Queue })
+export const Route = createFileRoute('/review')({ head: () => seo("/review", "Plugin review queue \u2014 Omachest", "Inspect Omarchy plugin submissions, source scans and reports. Authorized reviewers can approve exact commits or request changes with public notes."), component: Queue })
 function Queue() {
   const plugins = registry.plugins.filter(plugin => plugin.status !== 'verified').sort((a, b) => (b.reports?.length || 0) - (a.reports?.length || 0) || Number(b.status === 'review-required') - Number(a.status === 'review-required') || (b.capabilityChanges?.length || 0) - (a.capabilityChanges?.length || 0))
   return <><section className="page-intro"><p className="eyebrow">Community review</p><h1>A clear path to verification.</h1><p>Inspect a plugin’s source and scan, then record your decision. Reports and plugins needing attention come first.</p></section>

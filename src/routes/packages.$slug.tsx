@@ -1,3 +1,4 @@
+import { seo } from '../lib/seo'
 import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { ArrowLeft, ArrowUpRight, BadgeCheck, ExternalLink } from 'lucide-react'
 import { ReviewForm } from '../components/review-form'
@@ -11,7 +12,7 @@ export const Route = createFileRoute('/packages/$slug')({
     if (!plugin) throw notFound()
     return { plugin, history: registry.releases.filter(release => release.package === plugin.package) }
   },
-  head: ({ loaderData }) => ({ meta: [{ title: `${loaderData?.plugin.name || 'Plugin'} — Omachest` }, { name: 'description', content: loaderData?.plugin.description || 'Omarchy plugin details' }] }),
+  head: ({ loaderData }) => seo(`/packages/${loaderData?.plugin.slug || ''}`, `${loaderData?.plugin.name || 'Plugin'} — Omarchy plugin | Omachest`, loaderData ? `${loaderData.plugin.description} Inspect its exact source commit, scan results and review history on Omachest.` : 'Inspect Omarchy plugin source and review history.'),
   component: Package,
 })
 

@@ -1,9 +1,10 @@
+import { seo } from '../lib/seo'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowUpRight, GitCommitHorizontal } from 'lucide-react'
 import { displayDate, registry } from '../lib/catalog'
 
 export const Route = createFileRoute('/activity')({
-  head: () => ({ meta: [{ title: 'Release activity — Omachest' }] }),
+  head: () => seo("/activity", "Omarchy plugin releases \u2014 Omachest", "Browse scanned Omarchy plugin releases, exact source commits and public publication receipts. Follow community plugin updates on Omachest."),
   component: Activity,
 })
 

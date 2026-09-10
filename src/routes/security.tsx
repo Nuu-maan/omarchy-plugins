@@ -1,10 +1,11 @@
+import { seo } from '../lib/seo'
 import { createFileRoute } from '@tanstack/react-router'
 import { Shield } from 'lucide-react'
 import { StatusBadge } from '../components/status-badge'
 import { repositoryUrl } from '../lib/catalog'
 
 export const Route = createFileRoute('/security')({
-  head: () => ({ meta: [{ title: 'Trust & security — Omachest' }] }),
+  head: () => seo("/security", "Plugin verification & security \u2014 Omachest", "Understand Omachest verification, automated scan limits, source review and revocation. Learn how to inspect an Omarchy plugin and report a concern."),
   component: Security,
 })
 
