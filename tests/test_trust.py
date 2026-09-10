@@ -24,6 +24,21 @@ class TrustTests(unittest.TestCase):
         self.assertEqual(project([record], [approved, revoked])[0]['status'], 'revoked')
         self.assertEqual(scan['capabilities']['network'][0]['line'], 1)
 
+    def test_malformed_checklists_are_rejected_and_rescans_require_review(self):
+        scan = analyze({'x.qml': 'Item {}'}, lint=False)
+        record = {'package': '@a/b', 'commit': 'a' * 40, 'version': '1.0.0', 'scan': scan}
+        value = {'package': '@a/b', 'commit': record['commit'], 'action': 'approve',
+                 'notes': 'Inspected code', 'checklist': CHECKLIST, 'scanDigest': event_id(scan)}
+        actor = {'id': 1, 'login': 'owner'}
+        for checklist in [None, {}, [None], [{}], CHECKLIST + [CHECKLIST[0]]]:
+            with self.subTest(checklist=checklist), self.assertRaises(ValueError):
+                review({**value, 'checklist': checklist}, actor, [record], [1])
+        approved = review(value, actor, [record], [1])
+        changed = {**record, 'scan': {**scan, 'method': 'Updated scanner'}}
+        self.assertEqual(project([changed], [approved])[0]['status'], 'review-required')
+        failed = {**record, 'scan': {**scan, 'validation': 'failed'}}
+        self.assertEqual(project([failed], [approved])[0]['status'], 'review-required')
+
     def test_qml_parser_rejects_invalid_syntax(self):
         self.assertEqual(analyze({'Valid.qml': 'import QtQuick\nItem {}'})['validation'], 'passed')
         with self.assertRaises(ValueError):

@@ -45,7 +45,9 @@ def review(value, actor, records, reviewers):
     record = matches[-1]
     require(isinstance(value.get('notes'), str) and 0 < len(value['notes'].strip()) <= 4000, 'A review reason is required')
     if value['action'] == 'approve':
-        require(set(value.get('checklist', [])) == set(CHECKLIST), 'Complete every review checklist item')
+        checklist = value.get('checklist')
+        require(isinstance(checklist, list) and all(isinstance(item, str) for item in checklist) and
+                len(checklist) == len(CHECKLIST) and set(checklist) == set(CHECKLIST), 'Complete every review checklist item')
         require(record.get('scan', {}).get('validation') == 'passed', 'Approval requires a successful static scan')
         require(value.get('scanDigest') == event_id(record['scan']), 'Scan changed; review the latest scan')
     recommendation = value.get('recommendation', '')
@@ -78,7 +80,9 @@ def project(records, ledger):
         triggers = [e for e in related if (e['type'] in ('report', 'upstream') or (e.get('upstream') and approved)) and
                     (not exact or e['timestamp'] > exact[-1]['timestamp'])]
         identity_changed = approved and (approved[-1].get('repositoryId') != record.get('repositoryId') or approved[-1].get('repository') != record.get('repository'))
-        if record['capabilityChanges'] or triggers or identity_changed or (approved and not exact):
+        scan_changed = exact and exact[-1]['action'] == 'approve' and (
+            current.get('validation') != 'passed' or event_id(current) != event_id(exact[-1].get('scan') or {}))
+        if record['capabilityChanges'] or triggers or identity_changed or scan_changed or (approved and not exact):
             record['submissionStatus'] = 'REVIEW REQUIRED'
             record['status'] = 'review-required'
         if exact and exact[-1]['action'] == 'revoke':
