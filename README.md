@@ -35,7 +35,7 @@ The monitor checks listed repositories every 15 minutes, subject to GitHub Actio
 | Investigate reports; request changes or revoke a commit | A configured human reviewer |
 | Change the registry code or reviewer list | Maintainer, through a pull request |
 
-**Nuu-maan is the initial reviewer.** To approve a plugin, open its page from the review queue, inspect the source and scan findings, expand **Reviewer actions**, complete the checklist and enter a review note. Submit the prefilled review request on GitHub. The writer verifies your numeric GitHub identity and records your decision automatically. There is no plugin PR to merge.
+**Nuu-maan is the initial reviewer.** To approve a plugin, open its page from the review queue, inspect the source and scan findings, select **Review this plugin** near the top of the page, complete the checklist and enter a review note. Submit the prefilled review request on GitHub. The writer verifies your numeric GitHub identity and records your decision automatically. There is no plugin PR to merge.
 
 Additional trusted reviewers can be added to `data/reviewers.json` through a PR. Until someone performs a human review, the plugin remains unverified. Automated scans are not a guarantee of safety, and neither popularity nor repository age grants verification.
 
@@ -70,3 +70,9 @@ Vercel builds with `python3 scripts/publish.py && npm run build`. A main-branch 
 See [submission details](PUBLISHING.md), [security limits](SECURITY.md), and [architecture and capacity bounds](ARCHITECTURE.md). Known follow-ups are tracked in GitHub issues. Static scans do not establish runtime compatibility or cover every dependency and language.
 
 Omachest is not affiliated with the official Omarchy project. Plugin authors retain their credit and licenses.
+
+## Search visibility
+
+Every public page is prerendered with its own title, description, canonical URL and social sharing metadata. The build generates [sitemap.xml](https://omachest.vercel.app/sitemap.xml) from the current catalogue; [robots.txt](https://omachest.vercel.app/robots.txt) points crawlers to it. Canonicals use the primary Omachest domain, including for filtered URLs and the older domain alias.
+
+For indexing reports, verify the production URL in Google Search Console and submit the sitemap. Search engines decide when to crawl and index pages; a sitemap does not guarantee placement.
