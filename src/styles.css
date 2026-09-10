@@ -333,7 +333,7 @@ pre { background: var(--surface); border: 1px solid var(--line); padding: 20px; 
 .submission-form .button { justify-self: start; }
 .submission-form details input { margin-block: 12px; }
 .review-check { display: flex; align-items: center; gap: 12px; min-block-size: 44px; font-size: 13px; }
-.review-check input { accent-color: var(--accent); }
+.review-check input { accent-color: var(--accent); flex-shrink: 0; inline-size: 18px; block-size: 18px; }
 fieldset { border: 1px solid var(--control-line); padding: 14px; }
 .evidence { display: block; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 12px; margin-block: 8px; }
 .notice code, .submission-form code { overflow-wrap: anywhere; }
