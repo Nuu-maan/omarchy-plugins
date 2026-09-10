@@ -1,6 +1,7 @@
 import hashlib
 import json
 from collections import defaultdict
+from xml.etree.ElementTree import Element, SubElement, tostring
 from pathlib import Path
 
 from registry import parse_submission
@@ -45,6 +46,10 @@ def build():
     activity = sorted(revisions.values(), key=lambda r: r['publishedAt'], reverse=True)
     OUT.mkdir(exist_ok=True, parents=True)
     (OUT / 'registry.json').write_text(json.dumps({'schemaVersion': 1, 'plugins': latest, 'releases': activity}, separators=(',', ':')))
+    sitemap = Element('urlset', xmlns='http://www.sitemaps.org/schemas/sitemap/0.9')
+    for path in ['/', '/publish/', '/review/', '/security/', '/activity/'] + [f'/packages/{r["slug"]}/' for r in latest]:
+        SubElement(SubElement(sitemap, 'url'), 'loc').text = 'https://omachest.vercel.app' + path
+    (OUT / 'sitemap.xml').write_bytes(tostring(sitemap, encoding='utf-8', xml_declaration=True))
     print(f'Exported {len(latest)} plugins and {len(activity)} releases.')
 
 
