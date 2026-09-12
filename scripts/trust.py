@@ -66,8 +66,13 @@ def project(records, ledger):
         related = [e for e in ledger if e.get('package') == record['package']]
         reviews = [e for e in related if e['type'] == 'review']
         exact = [e for e in reviews if e['commit'] == record['commit']]
-        approved = [e for e in reviews if e['action'] == 'approve' and not any(
-            later['action'] == 'revoke' and later['commit'] == e['commit'] for later in reviews)]
+        approved_by_commit = {}
+        for e in reviews:
+            if e['action'] == 'approve':
+                approved_by_commit[e['commit']] = e
+            elif e['action'] == 'revoke':
+                approved_by_commit.pop(e['commit'], None)
+        approved = list(approved_by_commit.values())
         record['reviews'] = reviews
         record['reports'] = [e for e in related if e['type'] == 'report' and (not exact or e['timestamp'] > exact[-1]['timestamp'])]
         record['verification'] = approved[-1] if approved else None
