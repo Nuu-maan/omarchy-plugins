@@ -37,7 +37,7 @@ def build():
         grouped[record['package']].append(record)
     latest = []
     for history in grouped.values():
-        record = history[-1]
+        record = max(history, key=version_key)
         if record['status'] in ('checked', 'discovered'):
             record = {**record, 'status': 'unverified', 'submissionStatus': 'PENDING REVIEW', 'reviews': [], 'reports': [], 'verification': None, 'capabilityChanges': []}
         latest.append({**record, 'slug': hashlib.sha256(record['package'].encode()).hexdigest()[:20]})
