@@ -43,7 +43,7 @@ export type Plugin = {
 }
 
 export const registry = snapshot as { schemaVersion: number; plugins: Plugin[]; releases: Plugin[] }
-export const repositoryUrl = 'https://github.com/Nuu-maan/omarchy-plugins'
+export const repositoryUrl = 'https://github.com/Nuu-maan/omachests'
 export const kinds = [
   { value: '', label: 'All plugins' },
   { value: 'bar', label: 'Bars' },
