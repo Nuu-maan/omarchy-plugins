@@ -4,7 +4,7 @@ import json
 import re
 from datetime import datetime, timezone
 
-REGISTRY = 'Nuu-maan/omarchy-plugins'
+REGISTRY = 'Nuu-maan/omachests'
 BOT_ID = 41898282
 MARKER = 'Registry receipt v1\n```json\n'
 KINDS = {'bar-widget': 'barWidget', 'panel': 'panel', 'overlay': 'overlay',

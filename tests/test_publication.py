@@ -57,8 +57,8 @@ class PublicationTests(unittest.TestCase):
                 verify(self.api, self.submission, actor, 1)
         self.api.tree.append({'path': '.omarchy-registry.json', 'sha': '.omarchy-registry.json',
                               'type': 'blob', 'mode': '100644', 'size': 1000})
-        self.api.proof = {'registry': 'Nuu-maan/omarchy-plugins', 'publisher': 'member',
-                          'issue': 'https://github.com/Nuu-maan/omarchy-plugins/issues/1'}
+        self.api.proof = {'registry': 'Nuu-maan/omachests', 'publisher': 'member',
+                          'issue': 'https://github.com/Nuu-maan/omachests/issues/1'}
         self.assertEqual(verify(self.api, self.submission, 'member', 1)['publisher'], 'member')
         with self.assertRaises(ValueError):
             verify(self.api, self.submission, 'member', 2)

@@ -10,7 +10,7 @@ class GitHub:
     def request(self, path, method='GET', data=None):
         if not path.startswith('/') or path.startswith('//'):
             raise ValueError('Expected a GitHub API path')
-        headers = {'Accept': 'application/vnd.github+json', 'User-Agent': 'omarchy-plugins-registry',
+        headers = {'Accept': 'application/vnd.github+json', 'User-Agent': 'omachests-registry',
                    'X-GitHub-Api-Version': '2022-11-28'}
         if self.token:
             headers['Authorization'] = f'Bearer {self.token}'
