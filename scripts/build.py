@@ -48,7 +48,7 @@ def build():
     (OUT / 'registry.json').write_text(json.dumps({'schemaVersion': 1, 'plugins': latest, 'releases': activity}, separators=(',', ':')))
     sitemap = Element('urlset', xmlns='http://www.sitemaps.org/schemas/sitemap/0.9')
     for path in ['/', '/publish/', '/review/', '/security/', '/activity/'] + [f'/packages/{r["slug"]}/' for r in latest]:
-        SubElement(SubElement(sitemap, 'url'), 'loc').text = 'https://omachest.vercel.app' + path
+        SubElement(SubElement(sitemap, 'url'), 'loc').text = 'https://omachests.com' + path
     (OUT / 'sitemap.xml').write_bytes(tostring(sitemap, encoding='utf-8', xml_declaration=True))
     print(f'Exported {len(latest)} plugins and {len(activity)} releases.')
 
