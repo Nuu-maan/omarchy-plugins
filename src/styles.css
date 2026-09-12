@@ -205,18 +205,6 @@ td a { text-decoration: underline; }
 .steps article { border-block-start: 1px solid var(--line); padding-block-start: 18px; }
 .steps h2 { font-size: 1rem; margin-block: 11px; }
 .steps p { font-size: var(--text-sm); line-height: 1.8; }
-.publish-layout { display: grid; grid-template-columns: minmax(0,1fr) 280px; gap: 40px; align-items: start; margin-block: 40px; }
-.publish-form { background: var(--surface); border: 1px solid var(--line); padding: 28px; }
-.field { margin-block-end: 25px; }
-.field label { display: block; font-size: var(--text-sm); margin-block-end: 10px; }
-.field label span { color: var(--secondary); font-size: var(--text-xs); }
-.field input { inline-size: 100%; padding: 13px; border: 1px solid var(--control-line); background: var(--page); color: var(--text); border-radius: 2px; font-size: 1rem; }
-.field-hint { font-size: var(--text-xs); line-height: 1.8; margin-block-start: 8px; }
-.field-error { color: var(--text); border-inline-start: 2px solid var(--control-line); padding-inline-start: 8px; font-size: var(--text-xs); margin-block-start: 8px; }
-.publish-form>.field-hint { margin-block-start: 15px; }
-.publishing-aside h2 { font-size: 1rem; margin-block-start: 0; }
-.publishing-aside p { font-size: var(--text-sm); line-height: 1.9; margin-block-end: 15px; }
-.publishing-aside a { font-size: var(--text-xs); text-decoration: underline; }
 pre { background: var(--surface); border: 1px solid var(--line); padding: 20px; overflow-x: auto; font-size: var(--text-xs); line-height: 1.8; }
 .empty-state { text-align: center; padding: 50px 20px; border: 1px dashed var(--line); }
 .empty-state>svg { color: var(--secondary); }
@@ -264,7 +252,6 @@ pre { background: var(--surface); border: 1px solid var(--line); padding: 20px; 
   .hero { padding-block: 35px; }
   .package-columns { grid-template-columns: minmax(0,1fr); }
   .package-facts { display: block; }
-  .publish-layout { grid-template-columns: minmax(0,1fr); }
   .publishing-banner { align-items: start; gap: 25px; flex-direction: column; }
   .footer-top, .footer-bottom { flex-wrap: wrap; }
 }
