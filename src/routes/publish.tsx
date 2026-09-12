@@ -21,7 +21,7 @@ function Publish() {
       try { window.location.assign(submissionUrl(repository.trim(), '', path.trim())) } catch (reason) { setError(reason instanceof Error ? reason.message : 'Check the repository URL.'); document.getElementById('repository')?.focus() }
     }}>
       <label htmlFor="repository">GitHub repository URL</label><input id="repository" type="url" required value={repository} placeholder="https://github.com/you/your-plugin" autoComplete="url" aria-invalid={Boolean(error)} aria-describedby={error ? 'submission-error' : 'submission-help'} onChange={event => { setRepository(event.target.value); setError('') }} />
-      <p id="submission-help">Use a public repository with an Omarchy manifest.json.</p>
+      <p id="submission-help">Use a public repository with an Omarchy manifest.json. <a href="https://github.com/Nuu-maan/omarchy-plugins/blob/main/PUBLISHING.md#manifestjson">See an example manifest ↗</a></p>
       <details><summary>Plugin in a subdirectory?</summary><label htmlFor="path">Plugin directory</label><input id="path" value={path} onChange={event => setPath(event.target.value)} placeholder="plugins/weather" /></details>
       {error && <p id="submission-error" role="alert">{error}</p>}
       <button className="button primary" type="submit">Continue on GitHub <ArrowUpRight size={17} aria-hidden="true" /></button><p>Sign in and submit the prefilled issue on GitHub. This page does not submit until you confirm there.</p>
