@@ -73,6 +73,6 @@ Omachest is not affiliated with the official Omarchy project. Plugin authors ret
 
 ## Search visibility
 
-Every public page is prerendered with its own title, description, canonical URL and social sharing metadata. The build generates [sitemap.xml](https://omachests.com/sitemap.xml) from the current catalogue; [robots.txt](https://omachests.com/robots.txt) points crawlers to it. Canonicals use the primary Omachest domain, including for filtered URLs and the older domain alias.
+Every public page is prerendered with its own title, description, canonical URL and social sharing metadata. `scripts/og.mjs` renders a 1200×630 social image per page at build time from the catalogue snapshot, so link previews show the plugin's name, description, author, kind and review status. The build generates [sitemap.xml](https://omachests.com/sitemap.xml) from the current catalogue; [robots.txt](https://omachests.com/robots.txt) points crawlers to it. Canonicals use the primary Omachest domain, including for filtered URLs and the older domain alias.
 
 For indexing reports, verify the production URL in Google Search Console and submit the sitemap. Search engines decide when to crawl and index pages; a sitemap does not guarantee placement.
