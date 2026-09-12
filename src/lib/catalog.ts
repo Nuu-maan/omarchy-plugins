@@ -46,8 +46,11 @@ export const registry = snapshot as { schemaVersion: number; plugins: Plugin[]; 
 export const repositoryUrl = 'https://github.com/Nuu-maan/omarchy-plugins'
 export const kinds = [
   { value: '', label: 'All plugins' },
+  { value: 'bar', label: 'Bars' },
   { value: 'bar-widget', label: 'Bar widgets' },
   { value: 'panel', label: 'Panels' },
+  { value: 'overlay', label: 'Overlays' },
+  { value: 'menu', label: 'Menus' },
   { value: 'service', label: 'Services' },
 ] as const
 
