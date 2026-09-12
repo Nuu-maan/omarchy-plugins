@@ -23,6 +23,6 @@ export function PluginCard({ plugin }: { plugin: Plugin }) {
     <div className="card-title"><h3>{plugin.name}</h3><span className="version">v{plugin.version}</span></div>
     <p className="card-description">{plugin.description}</p>
     <div className="card-author"><span aria-hidden="true">@</span><bdi>{plugin.repository.split('/')[0]}</bdi><span className="card-stars" aria-label={`${plugin.stars} GitHub stars, snapshot`}><Star size={13} aria-hidden="true" />{plugin.stars}</span></div>
-    <div className="card-bottom"><span>{plugin.kinds[0].replace('bar-widget', 'Bar widget').replace(/^./, character => character.toUpperCase())}</span><span className="card-link">View plugin <ArrowUpRight size={16} aria-hidden="true" /></span></div>
+    <div className="card-bottom"><span>{(plugin.kinds[0] || 'plugin').replace('bar-widget', 'Bar widget').replace(/^./, character => character.toUpperCase())}</span><span className="card-link">View plugin <ArrowUpRight size={16} aria-hidden="true" /></span></div>
   </Link>
 }
