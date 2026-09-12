@@ -22,6 +22,10 @@ class TrustTests(unittest.TestCase):
         self.assertEqual(project([updated], [approved])[0]['status'], 'review-required')
         revoked = {**approved, 'action': 'revoke'}
         self.assertEqual(project([record], [approved, revoked])[0]['status'], 'revoked')
+        reapproved = {**approved, 'timestamp': '2026-09-11'}
+        restored = project([record], [approved, revoked, reapproved])[0]
+        self.assertEqual(restored['status'], 'verified')
+        self.assertIsNotNone(restored['verification'])
         self.assertEqual(scan['capabilities']['network'][0]['line'], 1)
 
     def test_malformed_checklists_are_rejected_and_rescans_require_review(self):
