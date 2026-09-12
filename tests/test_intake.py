@@ -20,3 +20,14 @@ class IntakeTests(unittest.TestCase):
         self.assertNotIn('action', proposal['event'])
         issue['body'] = json.dumps({'action': 'approve', 'package': '@owner/plugin', 'commit': 'a' * 40})
         self.assertIn('Only configured reviewers', prepare(API(), [record], [])[0]['error'])
+
+    def test_resubmission_cannot_replace_a_published_version(self):
+        issue = {'number': 21, 'labels': [], 'body': json.dumps({'repository': 'https://github.com/owner/plugin'}), 'user': {'id': 2, 'login': 'visitor'}}
+        class API:
+            def pages(self, path):
+                return [issue]
+        published = {'package': '@owner/plugin', 'commit': 'a' * 40, 'version': '1.0.0', 'repositoryId': 1}
+        resubmission = {**published, 'commit': 'b' * 40}
+        with patch('intake.resolve', return_value={}), patch('intake.verify', return_value=resubmission), patch('intake.scan_repository', return_value=resubmission):
+            proposal = prepare(API(), [published], [])[0]
+        self.assertIn('cannot be replaced', proposal['error'])
