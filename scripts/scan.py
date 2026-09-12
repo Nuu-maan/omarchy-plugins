@@ -42,11 +42,14 @@ def analyze(sources, lint=True):
                     continue
                 target = Path(directory) / f'{index}.qml'
                 target.write_text(source)
-                completed = subprocess.run([tool, '--ignore-settings', '--bare', '--json', '-', '--', str(target)],
-                                           capture_output=True, timeout=15, env={'PATH': '/usr/bin:/bin', 'HOME': directory})
+                try:
+                    completed = subprocess.run([tool, '--ignore-settings', '--bare', '--json', '-', '--', str(target)],
+                                               capture_output=True, timeout=15, env={'PATH': '/usr/bin:/bin', 'HOME': directory})
+                except subprocess.TimeoutExpired:
+                    raise ValueError(f'QML linting timed out in {path}') from None
                 require(len(completed.stdout) < 1_000_000, 'QML diagnostics exceed limit')
                 output = json.loads(completed.stdout)
-                warnings = output.get('files', [{}])[0].get('warnings', [])
+                warnings = (output.get('files') or [{}])[0].get('warnings', [])
                 require(not any(w.get('type') in ('critical', 'fatal') or w.get('id') == 'syntax' for w in warnings), f'QML syntax error in {path}')
                 require(completed.returncode in (0, 255), f'QML validation failed in {path}')
                 diagnostics.append({'file': path, 'warnings': len(warnings), 'note': 'Static parser only; Omarchy imports may be unavailable.'})
