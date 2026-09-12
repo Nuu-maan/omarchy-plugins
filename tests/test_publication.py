@@ -92,6 +92,17 @@ class PublicationTests(unittest.TestCase):
         self.assertEqual(sorted(versions, key=lambda v: build.version_key({'version': v})),
                          ['0.9.9', '1.0.0-beta.2', '1.0.0-beta.10', '1.0.0', '1.0.1'])
 
+    def test_latest_listing_is_chosen_by_version_not_append_order(self):
+        record = json.loads((build.ROOT / 'data/seed.json').read_text())[0]
+        newer = {**record, 'commit': 'c' * 40, 'version': '2.0.0', 'publishedAt': '2026-09-10'}
+        older = {**record, 'commit': 'd' * 40, 'version': '1.0.0', 'publishedAt': '2026-09-11'}
+        with tempfile.TemporaryDirectory() as directory:
+            out = Path(directory)
+            with patch.object(build, 'OUT', out), patch.object(build, 'load_records', return_value=[newer, older]):
+                build.build()
+            exported = json.loads((out / 'registry.json').read_text())['plugins'][0]
+            self.assertEqual(exported['version'], '2.0.0')
+
 
 if __name__ == '__main__':
     unittest.main()

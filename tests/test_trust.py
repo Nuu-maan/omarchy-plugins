@@ -1,6 +1,8 @@
+import subprocess
 import sys
 import unittest
 from pathlib import Path
+from unittest.mock import Mock, patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 from scan import analyze
 from trust import CHECKLIST, event_id, project, review
@@ -22,6 +24,10 @@ class TrustTests(unittest.TestCase):
         self.assertEqual(project([updated], [approved])[0]['status'], 'review-required')
         revoked = {**approved, 'action': 'revoke'}
         self.assertEqual(project([record], [approved, revoked])[0]['status'], 'revoked')
+        reapproved = {**approved, 'timestamp': '2026-09-11'}
+        restored = project([record], [approved, revoked, reapproved])[0]
+        self.assertEqual(restored['status'], 'verified')
+        self.assertIsNotNone(restored['verification'])
         self.assertEqual(scan['capabilities']['network'][0]['line'], 1)
 
     def test_malformed_checklists_are_rejected_and_rescans_require_review(self):
@@ -43,3 +49,13 @@ class TrustTests(unittest.TestCase):
         self.assertEqual(analyze({'Valid.qml': 'import QtQuick\nItem {}'})['validation'], 'passed')
         with self.assertRaises(ValueError):
             analyze({'Invalid.qml': 'import QtQuick\nItem { broken : }'})
+
+    def test_qmllint_timeout_is_a_clean_scan_failure(self):
+        with patch('scan.subprocess.run', side_effect=subprocess.TimeoutExpired(cmd='qmllint', timeout=15)):
+            with self.assertRaises(ValueError):
+                analyze({'x.qml': 'Item {}'})
+
+    def test_qmllint_empty_files_response_does_not_crash(self):
+        with patch('scan.subprocess.run', return_value=Mock(stdout=b'{"files":[]}', returncode=0)):
+            result = analyze({'x.qml': 'Item {}'})
+            self.assertEqual(result['qml'][0]['warnings'], 0)
