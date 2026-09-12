@@ -70,7 +70,7 @@ def prepare(api, records, ledger):
                 latest = matches[-1]
                 try:
                     event['rescan'] = scan_repository(api, dict(latest))['scan']
-                except (ValueError, KeyError) as error:
+                except (ValueError, KeyError, HTTPError) as error:
                     event['rescanError'] = str(error)[:1000]
             else:
                 submission = resolve(api, issue['body'])
