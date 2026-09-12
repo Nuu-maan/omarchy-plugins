@@ -33,7 +33,7 @@ def analyze(sources, lint=True):
                     if len(capabilities[key]) < 12:
                         capabilities[key].append({'file': path, 'line': number, 'evidence': line.strip()[:240]})
     diagnostics = []
-    tool = shutil.which('qmllint') or next((p for p in ['/usr/lib/qt6/bin/qmllint'] if Path(p).exists()), None)
+    tool = next((p for p in ['/usr/lib/qt6/bin/qmllint'] if Path(p).exists()), None) or shutil.which('qmllint')
     require(not lint or tool, 'qmllint is required for a complete scan')
     if lint:
         with tempfile.TemporaryDirectory() as directory:
