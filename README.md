@@ -2,7 +2,7 @@
 
 **Community plugins for Omarchy. Submit once. Keep building.**
 
-[Browse plugins](https://omachest.vercel.app) · [Submit a plugin](https://omachest.vercel.app/publish) · [Review queue](https://omachest.vercel.app/review) · [Trust policy](SECURITY.md)
+[Browse plugins](https://omachests.com) · [Submit a plugin](https://omachests.com/publish) · [Review queue](https://omachests.com/review) · [Trust policy](SECURITY.md)
 
 Omachest is an independent plugin directory with fast, prerendered pages and a public review history. It uses the existing Omarchy plugin format and GitHub repositories as the source of truth.
 
@@ -73,6 +73,6 @@ Omachest is not affiliated with the official Omarchy project. Plugin authors ret
 
 ## Search visibility
 
-Every public page is prerendered with its own title, description, canonical URL and social sharing metadata. The build generates [sitemap.xml](https://omachest.vercel.app/sitemap.xml) from the current catalogue; [robots.txt](https://omachest.vercel.app/robots.txt) points crawlers to it. Canonicals use the primary Omachest domain, including for filtered URLs and the older domain alias.
+Every public page is prerendered with its own title, description, canonical URL and social sharing metadata. The build generates [sitemap.xml](https://omachests.com/sitemap.xml) from the current catalogue; [robots.txt](https://omachests.com/robots.txt) points crawlers to it. Canonicals use the primary Omachest domain, including for filtered URLs and the older domain alias.
 
 For indexing reports, verify the production URL in Google Search Console and submit the sitemap. Search engines decide when to crawl and index pages; a sitemap does not guarantee placement.

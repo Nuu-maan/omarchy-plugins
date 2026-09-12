@@ -1,4 +1,4 @@
-export const siteUrl = 'https://omachest.vercel.app'
+export const siteUrl = 'https://omachests.com'
 
 export function seo(path: string, title: string, description: string) {
   const url = `${siteUrl}${path === '/' ? '/' : `${path.replace(/\/$/, '')}/`}`

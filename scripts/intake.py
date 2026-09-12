@@ -4,7 +4,7 @@ from pathlib import Path
 from urllib.parse import urlparse, quote
 from urllib.error import HTTPError
 
-from registry import REGISTRY, parse_submission, require, verify
+from registry import REGISTRY, check_release, parse_submission, require, verify
 from scan import scan_repository
 from trust import REASONS, event_id, payload, review
 
@@ -70,11 +70,12 @@ def prepare(api, records, ledger):
                 latest = matches[-1]
                 try:
                     event['rescan'] = scan_repository(api, dict(latest))['scan']
-                except (ValueError, KeyError) as error:
+                except (ValueError, KeyError, HTTPError) as error:
                     event['rescanError'] = str(error)[:1000]
             else:
                 submission = resolve(api, issue['body'])
                 record = scan_repository(api, verify(api, submission, issue['user']['login'], issue['number'], require_owner=False))
+                check_release(records, record)
                 event = {'type': 'submission', 'package': record['package'], 'record': record}
             event.update(requestId=request_id, timestamp=datetime.now(timezone.utc).isoformat())
             proposals.append({'issue': issue['number'], 'body': issue['body'], 'actorId': issue['user']['id'], 'event': event})
